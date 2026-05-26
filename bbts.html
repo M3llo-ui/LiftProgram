@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a0a" />
+<title>BBTS — Intermediate/Advanced</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --bg-1: #111114;
+    --bg-2: #16161b;
+    --bg-3: #1d1d24;
+    --line: #26262f;
+    --line-2: #33333f;
+    --ink: #f5f5f7;
+    --ink-dim: #a8a8b3;
+    --ink-mute: #6b6b78;
+    --accent: #d4ff3a;        /* electric lime */
+    --accent-ink: #0a0a0b;
+    --accent-2: #ff5b3a;       /* heat orange */
+    --warn: #ffb347;
+    --ok: #6bef9a;
+    --danger: #ff5b6b;
+    --rad: 14px;
+    --rad-sm: 10px;
+    --shadow: 0 10px 30px rgba(0,0,0,.45);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--bg); color: var(--ink); margin: 0; padding: 0; overscroll-behavior-y: none; }
+  body {
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: 'ss01','cv11';
+    min-height: 100dvh;
+    padding: 0 0 110px 0;  /* leave room for fixed footer */
+    line-height: 1.5;
+  }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; }
+
+  /* Background atmosphere */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(1100px 600px at 90% -10%, rgba(212,255,58,.06), transparent 60%),
+      radial-gradient(800px 500px at -10% 110%, rgba(255,91,58,.05), transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .container { max-width: 760px; margin: 0 auto; padding: 0 16px; position: relative; z-index: 1; }
+
+  /* Top bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    background: rgba(10,10,11,.78);
+    border-bottom: 1px solid var(--line);
+    padding-top: env(safe-area-inset-top);
+  }
+  .topbar-row { display: flex; align-items: center; gap: 10px; padding: 12px 16px; max-width: 760px; margin: 0 auto; }
+  .brand { font-weight: 800; letter-spacing: -0.02em; font-size: 16px; flex: 1; display: flex; align-items: center; gap: 10px; }
+  .brand .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 12px var(--accent); }
+  .iconbtn {
+    background: var(--bg-2); border: 1px solid var(--line); color: var(--ink);
+    width: 38px; height: 38px; border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 18px;
+  }
+  .iconbtn:hover { border-color: var(--line-2); }
+  .iconbtn:active { transform: scale(.96); }
+
+  /* Headings */
+  h1, h2, h3, h4 { letter-spacing: -0.02em; margin: 0; }
+  h1 { font-size: 34px; font-weight: 800; line-height: 1.05; }
+  h2 { font-size: 22px; font-weight: 700; }
+  h3 { font-size: 16px; font-weight: 700; }
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.12em; }
+
+  /* Hero / current day card */
+  .hero {
+    margin: 18px 0 18px;
+    padding: 22px 20px 24px;
+    border-radius: var(--rad);
+    background:
+      linear-gradient(180deg, rgba(212,255,58,.08), transparent 60%),
+      var(--bg-1);
+    border: 1px solid var(--line);
+    position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; right: -40px; top: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle at center, rgba(212,255,58,.16), transparent 70%);
+    pointer-events: none;
+  }
+  .hero .eyebrow { margin-bottom: 8px; }
+  .hero h1 { margin-bottom: 6px; }
+  .hero .sub { color: var(--ink-dim); margin-bottom: 16px; font-size: 14px; }
+  .hero .row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    color: var(--ink);
+    border-radius: var(--rad-sm);
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn:hover { border-color: var(--line-2); background: var(--bg-3); }
+  .btn:active { transform: scale(.98); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+  .btn.primary:hover { background: #e3ff60; border-color: #e3ff60; }
+  .btn.ghost { background: transparent; }
+  .btn.danger { color: var(--danger); }
+  .btn.full { width: 100%; }
+
+  /* Section */
+  .section { margin: 26px 0 10px; display: flex; align-items: baseline; justify-content: space-between; }
+  .section h2 { font-size: 18px; }
+  .section .meta { color: var(--ink-mute); font-size: 12px; }
+
+  /* Week grid */
+  .blocks { display: flex; flex-direction: column; gap: 22px; }
+  .block-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .block-head .pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    padding: 4px 10px; border-radius: 999px; background: var(--bg-2); border: 1px solid var(--line); color: var(--ink-dim);
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .block-head h3 { font-size: 14px; color: var(--ink-dim); font-weight: 600; }
+  .week-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+  .week-card {
+    background: var(--bg-1); border: 1px solid var(--line); border-radius: var(--rad-sm);
+    padding: 14px 12px; cursor: pointer; transition: all .15s;
+    text-align: left; color: inherit; font-family: inherit;
+  }
+  .week-card:hover { border-color: var(--line-2); background: var(--bg-2); }
+  .week-card.current { border-color: var(--accent); background: linear-gradient(180deg, rgba(212,255,58,.10), transparent), var(--bg-1); }
+  .week-card .wk { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-mute); }
+  .week-card .num { font-size: 26px; font-weight: 800; letter-spacing: -.02em; margin-top: 4px; }
+  .week-card .prog { margin-top: 8px; height: 4px; background: var(--bg-3); border-radius: 999px; overflow: hidden; }
+  .week-card .prog > i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+
+  /* Day pills (week page) */
+  .days-list { display: flex; flex-direction: column; gap: 10px; }
+  .day-card {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--bg-1); border: 1px solid var(--line); border-radius: var(--rad-sm);
+    padding: 14px 16px; cursor: pointer;
+    text-align: left; color: inherit; font-family: inherit; width: 100%;
+  }
+  .day-card:hover { border-color: var(--line-2); }
+  .day-card.rest { opacity: .55; cursor: default; }
+  .day-card .badge {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--bg-3); display: grid; place-items: center; font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    flex-shrink: 0;
+  }
+  .day-card.upper .badge { background: rgba(212,255,58,.12); color: var(--accent); }
+  .day-card.lower .badge { background: rgba(255,91,58,.14); color: var(--accent-2); }
+  .day-card.pull .badge  { background: rgba(107,239,154,.12); color: var(--ok); }
+  .day-card.push .badge  { background: rgba(255,179,71,.12); color: var(--warn); }
+  .day-card.legs .badge  { background: rgba(120,140,255,.14); color: #b3c2ff; }
+  .day-card .title { flex: 1; }
+  .day-card .title .name { font-weight: 700; }
+  .day-card .title .meta { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+  .day-card .chev { color: var(--ink-mute); font-size: 20px; }
+  .day-card .ring {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: conic-gradient(var(--accent) calc(var(--p,0) * 1%), var(--bg-3) 0);
+    display: grid; place-items: center;
+    position: relative; flex-shrink: 0;
+  }
+  .day-card .ring::before {
+    content: ''; width: 20px; height: 20px; border-radius: 50%; background: var(--bg-1);
+  }
+  .day-card .ring.done { background: var(--accent); }
+  .day-card .ring.done::before { background: var(--accent); }
+  .day-card .ring.done::after {
+    content: '✓'; position: absolute; color: var(--accent-ink); font-weight: 800; font-size: 14px; line-height: 1;
+  }
+
+  /* Exercise list */
+  .ex-list { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+  .ex-card {
+    background: var(--bg-1); border: 1px solid var(--line); border-radius: var(--rad);
+    overflow: hidden;
+  }
+  .ex-head {
+    padding: 14px 16px 12px;
+    display: flex; align-items: flex-start; gap: 12px;
+    cursor: pointer;
+  }
+  .ex-head .idx {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-mute);
+    background: var(--bg-3); padding: 4px 8px; border-radius: 6px; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .ex-head .ex-name { flex: 1; min-width: 0; }
+  .ex-head .ex-name .nm { font-weight: 700; font-size: 16px; letter-spacing: -.01em; }
+  .ex-head .ex-name .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; padding: 3px 8px; border-radius: 999px;
+         background: var(--bg-3); color: var(--ink-dim); border: 1px solid var(--line); white-space: nowrap; }
+  .tag.reps { background: rgba(212,255,58,.12); color: var(--accent); border-color: transparent; }
+  .tag.tech { background: rgba(255,91,58,.14); color: var(--accent-2); border-color: transparent; }
+  .tag.rpe { background: var(--bg-3); color: var(--ink); }
+  .tag.rest-tag { color: var(--ink-mute); }
+
+  .ex-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    border-top: 1px solid var(--line);
+    background: var(--bg-2);
+  }
+  .ex-stat { padding: 10px 8px; text-align: center; border-right: 1px solid var(--line); }
+  .ex-stat:last-child { border-right: 0; }
+  .ex-stat .k { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .1em; }
+  .ex-stat .v { font-weight: 700; font-size: 14px; margin-top: 2px; }
+
+  /* Set logging */
+  .sets-wrap { padding: 12px 16px 14px; border-top: 1px solid var(--line); background: var(--bg); }
+  .sets-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .sets-head .h { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .12em; }
+  .sets-head .h.col-set { width: 36px; text-align: center; }
+  .sets-head .grid {
+    display: grid; grid-template-columns: 36px 1fr 1fr 36px; gap: 8px; width: 100%; align-items: center;
+  }
+  .set-row {
+    display: grid; grid-template-columns: 36px 1fr 1fr 36px; gap: 8px; align-items: center;
+    padding: 6px 0;
+  }
+  .set-num {
+    text-align: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink-dim);
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 0;
+    font-size: 13px;
+  }
+  .set-row.done .set-num { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .set-row input[type=number] {
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 10px; color: var(--ink); font: inherit; font-family: 'JetBrains Mono', monospace;
+    text-align: center; width: 100%; font-size: 14px;
+    -moz-appearance: textfield;
+  }
+  .set-row input::-webkit-outer-spin-button,
+  .set-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .set-row input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+  .set-row .check {
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px;
+    width: 36px; height: 36px; display: grid; place-items: center; cursor: pointer; color: var(--ink-mute);
+    font-size: 16px;
+  }
+  .set-row.done .check { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .set-row.done input { color: var(--ink); border-color: var(--line-2); }
+
+  .ex-detail { padding: 10px 16px 16px; border-top: 1px solid var(--line); background: var(--bg-1); display: none; }
+  .ex-card.open .ex-detail { display: block; }
+  .ex-detail .row { display: grid; grid-template-columns: 100px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); align-items: start; }
+  .ex-detail .row:last-child { border-bottom: 0; }
+  .ex-detail .row .k { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .1em; padding-top: 2px; }
+  .ex-detail .row .v { font-size: 14px; color: var(--ink); }
+  .ex-detail .row .v.dim { color: var(--ink-dim); }
+  .toggle-detail { cursor: pointer; user-select: none; }
+
+  /* Day header */
+  .day-header { margin: 18px 0 6px; }
+  .day-header .crumbs { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-mute); text-transform: uppercase; letter-spacing: .12em; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+  .day-header h1 { font-size: 28px; }
+  .day-header .progress {
+    margin-top: 14px; height: 6px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden;
+  }
+  .day-header .progress > i { display: block; height: 100%; background: var(--accent); transition: width .25s; }
+  .day-header .progmeta { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-mute); margin-top: 6px; text-transform: uppercase; letter-spacing: .1em; }
+
+  /* Footer nav */
+  .footnav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(10,10,11,.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+  }
+  .footnav .container { display: flex; gap: 6px; padding: 10px 12px; }
+  .footnav .nb {
+    flex: 1; background: transparent; border: 0; color: var(--ink-mute); padding: 8px 4px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+    font: inherit; font-size: 11px; font-weight: 600;
+  }
+  .footnav .nb.active { color: var(--accent); }
+  .footnav .nb svg { width: 22px; height: 22px; }
+
+  /* Timer FAB */
+  .fab-timer {
+    position: fixed; right: 16px; bottom: calc(78px + env(safe-area-inset-bottom)); z-index: 25;
+    background: var(--accent); color: var(--accent-ink); border: 0;
+    border-radius: 999px; height: 52px; min-width: 52px; padding: 0 18px;
+    font-weight: 800; font-family: 'JetBrains Mono', monospace; font-size: 15px;
+    box-shadow: var(--shadow); display: none; align-items: center; gap: 8px; cursor: pointer;
+  }
+  .fab-timer.show { display: inline-flex; }
+  .fab-timer .lbl { font-size: 9.5px; opacity: .65; letter-spacing: .1em; }
+  .fab-timer.warn { background: var(--accent-2); color: #fff; }
+
+  /* Modal */
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 50;
+    display: none; align-items: flex-end; justify-content: center;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    width: 100%; max-width: 480px; background: var(--bg-1); border: 1px solid var(--line); border-top-left-radius: 18px; border-top-right-radius: 18px;
+    padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+    transform: translateY(20px); transition: transform .2s;
+  }
+  .modal-bg.show .modal { transform: translateY(0); }
+  .modal h3 { margin-bottom: 12px; }
+  .modal .opts { display: flex; flex-direction: column; gap: 8px; }
+  @media (min-width: 540px) {
+    .modal-bg { align-items: center; }
+    .modal { border-radius: 18px; }
+  }
+
+  /* Protocol page */
+  .panel {
+    background: var(--bg-1); border: 1px solid var(--line); border-radius: var(--rad);
+    padding: 18px 20px; margin: 14px 0;
+  }
+  .panel h3 { margin-bottom: 10px; }
+  .protocol-row { display: grid; grid-template-columns: 140px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+  .protocol-row:last-child { border-bottom: 0; }
+  .protocol-row .k { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--ink-dim); }
+  .protocol-row .v { font-size: 14px; color: var(--ink); }
+
+  @media (max-width: 420px) {
+    .protocol-row { grid-template-columns: 1fr; gap: 2px; }
+    h1 { font-size: 28px; }
+    .ex-detail .row { grid-template-columns: 90px 1fr; }
+    .ex-stats { grid-template-columns: repeat(2, 1fr); }
+    .ex-stat { border-right: 0; border-bottom: 1px solid var(--line); }
+    .ex-stat:nth-child(odd) { border-right: 1px solid var(--line); }
+    .ex-stat:nth-last-child(-n+2) { border-bottom: 0; }
+  }
+
+  /* Subtle entrance */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in > * { animation: fadeUp .25s ease-out both; }
+  .fade-in > *:nth-child(2) { animation-delay: .04s; }
+  .fade-in > *:nth-child(3) { animation-delay: .08s; }
+  .fade-in > *:nth-child(4) { animation-delay: .12s; }
+  .fade-in > *:nth-child(5) { animation-delay: .16s; }
+  .fade-in > *:nth-child(n+6) { animation-delay: .20s; }
+
+  /* Small helpers */
+  .stack { display: flex; flex-direction: column; gap: 10px; }
+  .muted { color: var(--ink-dim); }
+  .center { text-align: center; }
+  .hidden { display: none !important; }
+  a { color: inherit; }
+
+  .toast {
+    position: fixed; left: 50%; transform: translate(-50%, 20px);
+    bottom: calc(110px + env(safe-area-inset-bottom));
+    background: var(--bg-3); color: var(--ink); padding: 10px 16px; border-radius: 999px;
+    border: 1px solid var(--line-2); font-size: 13px; font-weight: 600;
+    opacity: 0; transition: all .2s; z-index: 60; pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-row">
+    <button id="backbtn" class="iconbtn hidden" aria-label="Back" title="Back">←</button>
+    <div class="brand"><span class="dot"></span><span>BBTS · Int/Adv</span></div>
+    <button id="resetbtn" class="iconbtn" aria-label="Reset" title="Reset progress">⟲</button>
+  </div>
+</header>
+
+<main class="container" id="app"></main>
+
+<button id="fab" class="fab-timer" aria-label="Rest timer"><span id="fab-time">0:00</span></button>
+
+<div id="modal" class="modal-bg" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3 id="modal-title">Confirm</h3>
+    <div id="modal-body" class="muted" style="margin-bottom:14px"></div>
+    <div class="opts">
+      <button id="modal-ok" class="btn primary full">OK</button>
+      <button id="modal-cancel" class="btn ghost full">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<nav class="footnav">
+  <div class="container">
+    <button class="nb" data-route="#/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></svg>Home</button>
+    <button class="nb" data-route="#/weeks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Weeks</button>
+    <button class="nb" data-route="#/protocol"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Protocol</button>
+    <button class="nb" data-route="#/stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>Stats</button>
+  </div>
+</nav>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const PROGRAM = {"title":"The Bodybuilding Transformation System — Intermediate/Advanced","author":"Jeff Nippard","programNotes":"IMPORTANT PROGRAM NOTES (READ BEFORE STARTING)\n\n● Perform a full general warm-up and exercise-specific warm-up every workout as outlined below (should only take 5-10 mins max)\n\n● Note that for the first week of the program, most sets are taken to an RPE of ~7-9. This means you will be leaving 1-3 reps in the tank on most exercises. This only lasts for the first week (to serve as a deload/intro week). After the first week, the intensity will increase and you’ll start taking the last set of every exercise to failure.\n\n● All working sets are broken up into Early Sets and Last Sets. The Early Sets are all the sets that come before your Last Set. Usually the Early Sets should be a little bit easier than the later sets (slightly lower RPE) whereas the Last Set is pushed to failure on all exercises (besides intro/deload weeks). See the Bodybuilding Transformation System Guidebook for a full explanation of RPE.\n\n● Each exercise has a clickable link which demonstrates how to perform the exercise. I suggest watching each exercise demo before starting the workout.\n\n● All other aspects of the program, including when to make an exercise substitution and how to progress through the rep ranges given is explained in the Bodybuilding Transformation System Guidebook. Give it a full read before starting your first workout! Let's crush it!!","warmupGeneral":[{"duration":"5-10 minutes","exercise":"Light cardio on machine on your choice of machine (treadmill, stairmaster, elliptical, bike, etc.)"},{"duration":"10 reps per side","exercise":"Arm Swings"},{"duration":"10 reps per side","exercise":"Arm Circles"},{"duration":"10 reps per side","exercise":"Front-to-Back Leg Swings"},{"duration":"10 reps per side","exercise":"Side-to-Side Leg Swings"},{"duration":"15 reps per side","exercise":"Cable External Rotation (optional)"}],"warmupSpecific":[{"sets":"1 Warm-Up Set Listed","instructions":"Use ~60% of your planned working weight for ~6-10 reps (or until you feel warm and loose)"},{"sets":"2 Warm-Up Sets Listed","instructions":"Perform a mini warm-up pyramid: \nWarm-Up Set #1 = ~50% of planned working weight for ~6-10 reps \nWarm-Up Set #2 = ~70% of planned working weight for 4-6 reps"},{"sets":"3 Warm-Up Sets Listed","instructions":"Perform a full warm-up pyramid: \nWarm-Up Set #1 = ~45% of planned working weight for ~6-10 reps \nWarm-Up Set #2 = ~65% of planned working weight for 4-6 reps\nWarm-Up Set #3 = ~85% of planned working weight for 3-4 reps"},{"sets":"4 Warm-Up Sets Listed","instructions":"Perform a full warm-up pyramid:\nWarm-Up Set #1 = ~45% of planned working weight for ~6-10 reps\nWarm-Up Set #2 = ~60% of planned working weight for 4-6 reps\nWarm-Up Set #3 = ~75% of planned working weight for 3-5 reps\nWarm-Up Set #4 = ~85% of planned working weight for 2-4 reps"}],"weeks":[{"block":"Foundation Block","number":1,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline Barbell Press","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"6-8","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"3-5 min","sub1":"45° Incline DB Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Cable Crossover Ladder","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Pec Deck","sub2":"Bottom-Half DB Flye","notes":"Do one set with low cable position, one set with medium-height cable position, and one height with a high cable position. If you only have one or two sets, choose the one or two cable positions you prefer."},{"name":"Wide-Grip Pull-Up","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Dual-Handle Lat Pulldown","notes":"1.5x shoulder width overhand grip. Slow 2-3 second negative. Feel your lats pulling apart on the way down."},{"name":"High-Cable Lateral Raise","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Pendlay Deficit Row","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"2-3 min","sub1":"Smith Machine Row","sub2":"Single-Arm DB Row","notes":"Stand on a bumper plate. Focus on getting a big stretch and touch your stomach/chest on each rep!"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"N/A","warmupSets":"2","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Squat","technique":"N/A","warmupSets":"2-4","workingSets":"2","reps":"6-8","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Once you are under the bar, set up your feet as you would a normal squat and then bring them forward ~3-6 inches. This will cause you to lean back into the bar slightly, allowing for a more upright squat, while also placing more tension on the quads. If your heels are raising at the bottom, you may need to bring your feet more forward. If your feet feel like they are slipping or your lower back is rounding at the bottom, try bringing your feet back a bit."},{"name":"Barbell RDL","technique":"N/A","warmupSets":"2-4","workingSets":"2","reps":"6-8","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"DB RDL","sub2":"Snatch-Grip RDL","notes":"To keep tension on the hamstrings, stop about 75% of the way to full lockout on each rep (i.e. stay in the bottom 3/4 of the range of motion)."},{"name":"Leg Extension","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Standing Calf Raise","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Cable Crunch","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Machine Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Neutral-Grip Lat Pulldown","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Neutral-Grip Pull-Up","sub2":"Dual-Handle Lat Pulldown","notes":"Do these pulldowns with the handle more out in front of you, more like a cross between pullover and a pulldown. Focus on feeling your lats working more than the weight you're using."},{"name":"Chest-Supported Machine Row","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Chest-Supported T-Bar Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Neutral-Grip Seated Cable Row","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"2-3 min","sub1":"Helms Row","sub2":"Meadows Row","notes":"Focus on squeezing your shoulder blades together, driving your elbows down and back."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Machine Shrug","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Cable Paused Shrug-In","sub2":"DB Shrug","notes":"Brief pause at the top and bottom of ROM. Think about pulling your shoulders up to your ears!"},{"name":"EZ-Bar Cable Curl","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"EZ-Bar Curl","sub2":"DB Curl","notes":"Set up the cable at the lowest position. Maintain constant tension on the biceps. Slow, controlled reps!"},{"name":"Machine Preacher Curl","technique":"N/A","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"~8-9","rest":"1-2 min","sub1":"EZ-Bar Preacher Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Barbell Bench Press","technique":"N/A","warmupSets":"2-4","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"3-5 min","sub1":"Machine Chest Press","sub2":"DB Bench Press","notes":"Set up a comfortable arch, quick pause on the chest and explode up on each rep."},{"name":"Machine Shoulder Press","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Seated DB Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half DB Flye","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Bottom-Half Seated Cable Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Cable Triceps Kickback","technique":"N/A","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"~8-9","rest":"1-2 min","sub1":"DB Triceps Kickback","sub2":"Bench Dip","notes":"There are two ways you can do this: upright or bent over. Choose the one that feels more comfortable for you. The main thing is that when you're in the full squeeze, your shoulder should be positioned back behind your torso."},{"name":"Roman Chair Leg Raise","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-20","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Hanging Leg Raise","sub2":"Modified Candlestick","notes":"Allow your lower back to round as you curl your legs up. 10-20 reps is a broad range on purpose: just go until you hit the listed RPE with controlled form."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Leg Press","technique":"N/A","warmupSets":"2-4","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Walking Lunge","notes":"Feet lower on the platform for more quad focus. Get as deep as you can without excessive back rounding. Control the negative and do a slight pause at the bottom of each rep."},{"name":"Seated Leg Curl","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"DB Bulgarian Split Squat","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"DB Step-Up","sub2":"Goblet Squat","notes":"Lower all the way down until your front thigh is parallel to the ground. Drive through your front heel on the way up."},{"name":"Leg Extension","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Foundation Block","number":2,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline Barbell Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline DB Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Cable Crossover Ladder","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Pec Deck","sub2":"Bottom-Half DB Flye","notes":"Do one set with low cable position, one set with medium-height cable position, and one height with a high cable position. If you only have one or two sets, choose the one or two cable positions you prefer."},{"name":"Wide-Grip Pull-Up","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Dual-Handle Lat Pulldown","notes":"1.5x shoulder width overhand grip. Slow 2-3 second negative. Feel your lats pulling apart on the way down."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Pendlay Deficit Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Row","sub2":"Single-Arm DB Row","notes":"Stand on a bumper plate. Focus on getting a big stretch and touch your stomach/chest on each rep!"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Squat","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Once you are under the bar, set up your feet as you would a normal squat and then bring them forward ~3-6 inches. This will cause you to lean back into the bar slightly, allowing for a more upright squat, while also placing more tension on the quads. If your heels are raising at the bottom, you may need to bring your feet more forward. If your feet feel like they are slipping or your lower back is rounding at the bottom, try bringing your feet back a bit."},{"name":"Barbell RDL","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"DB RDL","sub2":"Snatch-Grip RDL","notes":"To keep tension on the hamstrings, stop about 75% of the way to full lockout on each rep (i.e. stay in the bottom 3/4 of the range of motion)."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Cable Crunch","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Machine Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Neutral-Grip Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Neutral-Grip Pull-Up","sub2":"Dual-Handle Lat Pulldown","notes":"Do these pulldowns with the handle more out in front of you, more like a cross between pullover and a pulldown. Focus on feeling your lats working more than the weight you're using."},{"name":"Chest-Supported Machine Row","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported T-Bar Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Neutral-Grip Seated Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Helms Row","sub2":"Meadows Row","notes":"Focus on squeezing your shoulder blades together, driving your elbows down and back."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Machine Shrug","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Paused Shrug-In","sub2":"DB Shrug","notes":"Brief pause at the top and bottom of ROM. Think about pulling your shoulders up to your ears!"},{"name":"EZ-Bar Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"EZ-Bar Curl","sub2":"DB Curl","notes":"Set up the cable at the lowest position. Maintain constant tension on the biceps. Slow, controlled reps!"},{"name":"Machine Preacher Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"10","rest":"1-2 min","sub1":"EZ-Bar Preacher Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Barbell Bench Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Machine Chest Press","sub2":"DB Bench Press","notes":"Set up a comfortable arch, quick pause on the chest and explode up on each rep."},{"name":"Machine Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Seated DB Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half DB Flye","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half Seated Cable Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Cable Triceps Kickback","technique":"Myo-reps","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"10","rest":"1-2 min","sub1":"DB Triceps Kickback","sub2":"Bench Dip","notes":"There are two ways you can do this: upright or bent over. Choose the one that feels more comfortable for you. The main thing is that when you're in the full squeeze, your shoulder should be positioned back behind your torso."},{"name":"Roman Chair Leg Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Hanging Leg Raise","sub2":"Modified Candlestick","notes":"Allow your lower back to round as you curl your legs up. 10-20 reps is a broad range on purpose: just go until you hit the listed RPE with controlled form."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Leg Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Walking Lunge","notes":"Feet lower on the platform for more quad focus. Get as deep as you can without excessive back rounding. Control the negative and do a slight pause at the bottom of each rep."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"DB Bulgarian Split Squat","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"DB Step-Up","sub2":"Goblet Squat","notes":"Lower all the way down until your front thigh is parallel to the ground. Drive through your front heel on the way up."},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Foundation Block","number":3,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline Barbell Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline DB Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Cable Crossover Ladder","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Pec Deck","sub2":"Bottom-Half DB Flye","notes":"Do one set with low cable position, one set with medium-height cable position, and one height with a high cable position. If you only have one or two sets, choose the one or two cable positions you prefer."},{"name":"Wide-Grip Pull-Up","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Dual-Handle Lat Pulldown","notes":"1.5x shoulder width overhand grip. Slow 2-3 second negative. Feel your lats pulling apart on the way down."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Pendlay Deficit Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Row","sub2":"Single-Arm DB Row","notes":"Stand on a bumper plate. Focus on getting a big stretch and touch your stomach/chest on each rep!"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Squat","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Once you are under the bar, set up your feet as you would a normal squat and then bring them forward ~3-6 inches. This will cause you to lean back into the bar slightly, allowing for a more upright squat, while also placing more tension on the quads. If your heels are raising at the bottom, you may need to bring your feet more forward. If your feet feel like they are slipping or your lower back is rounding at the bottom, try bringing your feet back a bit."},{"name":"Barbell RDL","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"DB RDL","sub2":"Snatch-Grip RDL","notes":"To keep tension on the hamstrings, stop about 75% of the way to full lockout on each rep (i.e. stay in the bottom 3/4 of the range of motion)."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Cable Crunch","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Machine Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Neutral-Grip Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Neutral-Grip Pull-Up","sub2":"Dual-Handle Lat Pulldown","notes":"Do these pulldowns with the handle more out in front of you, more like a cross between pullover and a pulldown. Focus on feeling your lats working more than the weight you're using."},{"name":"Chest-Supported Machine Row","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported T-Bar Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Neutral-Grip Seated Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Helms Row","sub2":"Meadows Row","notes":"Focus on squeezing your shoulder blades together, driving your elbows down and back."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Machine Shrug","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Paused Shrug-In","sub2":"DB Shrug","notes":"Brief pause at the top and bottom of ROM. Think about pulling your shoulders up to your ears!"},{"name":"EZ-Bar Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"EZ-Bar Curl","sub2":"DB Curl","notes":"Set up the cable at the lowest position. Maintain constant tension on the biceps. Slow, controlled reps!"},{"name":"Machine Preacher Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"10","rest":"1-2 min","sub1":"EZ-Bar Preacher Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Barbell Bench Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Machine Chest Press","sub2":"DB Bench Press","notes":"Set up a comfortable arch, quick pause on the chest and explode up on each rep."},{"name":"Machine Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Seated DB Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half DB Flye","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half Seated Cable Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Cable Triceps Kickback","technique":"Myo-reps","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"10","rest":"1-2 min","sub1":"DB Triceps Kickback","sub2":"Bench Dip","notes":"There are two ways you can do this: upright or bent over. Choose the one that feels more comfortable for you. The main thing is that when you're in the full squeeze, your shoulder should be positioned back behind your torso."},{"name":"Roman Chair Leg Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Hanging Leg Raise","sub2":"Modified Candlestick","notes":"Allow your lower back to round as you curl your legs up. 10-20 reps is a broad range on purpose: just go until you hit the listed RPE with controlled form."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Leg Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Walking Lunge","notes":"Feet lower on the platform for more quad focus. Get as deep as you can without excessive back rounding. Control the negative and do a slight pause at the bottom of each rep."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"DB Bulgarian Split Squat","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"DB Step-Up","sub2":"Goblet Squat","notes":"Lower all the way down until your front thigh is parallel to the ground. Drive through your front heel on the way up."},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Foundation Block","number":4,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline Barbell Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline DB Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Cable Crossover Ladder","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Pec Deck","sub2":"Bottom-Half DB Flye","notes":"Do one set with low cable position, one set with medium-height cable position, and one height with a high cable position. If you only have one or two sets, choose the one or two cable positions you prefer."},{"name":"Wide-Grip Pull-Up","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Dual-Handle Lat Pulldown","notes":"1.5x shoulder width overhand grip. Slow 2-3 second negative. Feel your lats pulling apart on the way down."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Pendlay Deficit Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Row","sub2":"Single-Arm DB Row","notes":"Stand on a bumper plate. Focus on getting a big stretch and touch your stomach/chest on each rep!"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Squat","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Once you are under the bar, set up your feet as you would a normal squat and then bring them forward ~3-6 inches. This will cause you to lean back into the bar slightly, allowing for a more upright squat, while also placing more tension on the quads. If your heels are raising at the bottom, you may need to bring your feet more forward. If your feet feel like they are slipping or your lower back is rounding at the bottom, try bringing your feet back a bit."},{"name":"Barbell RDL","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"DB RDL","sub2":"Snatch-Grip RDL","notes":"To keep tension on the hamstrings, stop about 75% of the way to full lockout on each rep (i.e. stay in the bottom 3/4 of the range of motion)."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Cable Crunch","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Machine Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Neutral-Grip Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Neutral-Grip Pull-Up","sub2":"Dual-Handle Lat Pulldown","notes":"Do these pulldowns with the handle more out in front of you, more like a cross between pullover and a pulldown. Focus on feeling your lats working more than the weight you're using."},{"name":"Chest-Supported Machine Row","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported T-Bar Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Neutral-Grip Seated Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Helms Row","sub2":"Meadows Row","notes":"Focus on squeezing your shoulder blades together, driving your elbows down and back."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Machine Shrug","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Paused Shrug-In","sub2":"DB Shrug","notes":"Brief pause at the top and bottom of ROM. Think about pulling your shoulders up to your ears!"},{"name":"EZ-Bar Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"EZ-Bar Curl","sub2":"DB Curl","notes":"Set up the cable at the lowest position. Maintain constant tension on the biceps. Slow, controlled reps!"},{"name":"Machine Preacher Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"10","rest":"1-2 min","sub1":"EZ-Bar Preacher Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Barbell Bench Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Machine Chest Press","sub2":"DB Bench Press","notes":"Set up a comfortable arch, quick pause on the chest and explode up on each rep."},{"name":"Machine Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Seated DB Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half DB Flye","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half Seated Cable Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Cable Triceps Kickback","technique":"Myo-reps","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"10","rest":"1-2 min","sub1":"DB Triceps Kickback","sub2":"Bench Dip","notes":"There are two ways you can do this: upright or bent over. Choose the one that feels more comfortable for you. The main thing is that when you're in the full squeeze, your shoulder should be positioned back behind your torso."},{"name":"Roman Chair Leg Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Hanging Leg Raise","sub2":"Modified Candlestick","notes":"Allow your lower back to round as you curl your legs up. 10-20 reps is a broad range on purpose: just go until you hit the listed RPE with controlled form."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Leg Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Walking Lunge","notes":"Feet lower on the platform for more quad focus. Get as deep as you can without excessive back rounding. Control the negative and do a slight pause at the bottom of each rep."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"DB Bulgarian Split Squat","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"DB Step-Up","sub2":"Goblet Squat","notes":"Lower all the way down until your front thigh is parallel to the ground. Drive through your front heel on the way up."},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Foundation Block","number":5,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline Barbell Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline DB Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Cable Crossover Ladder","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Pec Deck","sub2":"Bottom-Half DB Flye","notes":"Do one set with low cable position, one set with medium-height cable position, and one height with a high cable position. If you only have one or two sets, choose the one or two cable positions you prefer."},{"name":"Wide-Grip Pull-Up","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Dual-Handle Lat Pulldown","notes":"1.5x shoulder width overhand grip. Slow 2-3 second negative. Feel your lats pulling apart on the way down."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Pendlay Deficit Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Row","sub2":"Single-Arm DB Row","notes":"Stand on a bumper plate. Focus on getting a big stretch and touch your stomach/chest on each rep!"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Squat","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Once you are under the bar, set up your feet as you would a normal squat and then bring them forward ~3-6 inches. This will cause you to lean back into the bar slightly, allowing for a more upright squat, while also placing more tension on the quads. If your heels are raising at the bottom, you may need to bring your feet more forward. If your feet feel like they are slipping or your lower back is rounding at the bottom, try bringing your feet back a bit."},{"name":"Barbell RDL","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"DB RDL","sub2":"Snatch-Grip RDL","notes":"To keep tension on the hamstrings, stop about 75% of the way to full lockout on each rep (i.e. stay in the bottom 3/4 of the range of motion)."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"6-8","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Cable Crunch","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Machine Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Neutral-Grip Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Neutral-Grip Pull-Up","sub2":"Dual-Handle Lat Pulldown","notes":"Do these pulldowns with the handle more out in front of you, more like a cross between pullover and a pulldown. Focus on feeling your lats working more than the weight you're using."},{"name":"Chest-Supported Machine Row","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported T-Bar Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Neutral-Grip Seated Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Helms Row","sub2":"Meadows Row","notes":"Focus on squeezing your shoulder blades together, driving your elbows down and back."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Machine Shrug","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Paused Shrug-In","sub2":"DB Shrug","notes":"Brief pause at the top and bottom of ROM. Think about pulling your shoulders up to your ears!"},{"name":"EZ-Bar Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"EZ-Bar Curl","sub2":"DB Curl","notes":"Set up the cable at the lowest position. Maintain constant tension on the biceps. Slow, controlled reps!"},{"name":"Machine Preacher Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"10","rest":"1-2 min","sub1":"EZ-Bar Preacher Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Barbell Bench Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Machine Chest Press","sub2":"DB Bench Press","notes":"Set up a comfortable arch, quick pause on the chest and explode up on each rep."},{"name":"Machine Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Seated DB Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half DB Flye","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half Seated Cable Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Cable Triceps Kickback","technique":"Myo-reps","warmupSets":"1","workingSets":"1","reps":"12-15","earlyRPE":"N/A","lastRPE":"10","rest":"1-2 min","sub1":"DB Triceps Kickback","sub2":"Bench Dip","notes":"There are two ways you can do this: upright or bent over. Choose the one that feels more comfortable for you. The main thing is that when you're in the full squeeze, your shoulder should be positioned back behind your torso."},{"name":"Roman Chair Leg Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Hanging Leg Raise","sub2":"Modified Candlestick","notes":"Allow your lower back to round as you curl your legs up. 10-20 reps is a broad range on purpose: just go until you hit the listed RPE with controlled form."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Leg Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Walking Lunge","notes":"Feet lower on the platform for more quad focus. Get as deep as you can without excessive back rounding. Control the negative and do a slight pause at the bottom of each rep."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"DB Bulgarian Split Squat","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"DB Step-Up","sub2":"Goblet Squat","notes":"Lower all the way down until your front thigh is parallel to the ground. Drive through your front heel on the way up."},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Ramping Block","number":6,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline DB Press","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"3-5 min","sub1":"45° Incline Barbell Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Pec Deck","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Cable Crossover Ladder","sub2":"Bottom-Half DB Flye","notes":"Focus on bringing your elbows together - not your hands"},{"name":"Dual-Handle Lat Pulldown","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Wide-Grip Pull-Up","notes":"Lean back by ~15° and drive your elbows down as you squeeze your shoulder blades together. This should feel like a mix of lats and mid-traps."},{"name":"High-Cable Lateral Raise","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Smith Machine Row","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"2-3 min","sub1":"Pendlay Deficit Row","sub2":"Single-Arm DB Row","notes":"Focus on squeezing your shoulder blades together, keeping your elbows at a ~45° angle"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"N/A","warmupSets":"2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Static Lunge w/ Elevated Front Foot","technique":"N/A","warmupSets":"2-4","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Elevate your front foot on a small box. Minimize contribution from your back leg."},{"name":"45° Hyperextension","technique":"N/A","warmupSets":"2-4","workingSets":"2","reps":"8-10","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Glute-Ham Raise","sub2":"Cable Pull-Through","notes":"Squeeze your glutes hard at the top of each rep. Slow controlled reps on the way down, followed by an explosive positive."},{"name":"Leg Extension","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Leg Press Calf Press","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"8-10","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Standing Calf Raise","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Machine Crunch","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Cable Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Lean-Back Lat Pulldown","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Lean-Back Machine Pulldown","sub2":"Pull-Up","notes":"Initiate the pulldown with a straight up posture. As you pull the bar down, lean back by about 15-30° to get the mid-back more involved. Softly touch the bar to your chest on every rep and, even though you're leaning back, still control the weight!"},{"name":"Chest-Supported T-Bar Row","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Chest-Supported Machine Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Dual-Handle Elbows-Out Cable Row","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"2-3 min","sub1":"Arm-Out Single-Arm DB Row","sub2":"Meadows Row","notes":"Flare your elbows out ~45°. Smooth, controlled reps."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Cable Paused Shrug-In","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Machine Shrug","sub2":"DB Shrug","notes":"Shrug up and in. Think about shrugging \"up to your ears.\" 1-2 second pause in the squeeze (at the top) of each rep, then another 1-2 second pause in the stretch (at the bottom) of each rep."},{"name":"Cable Rope Hammer Curl","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"DB Hammer Curl","sub2":"Hammer Preacher Curl","notes":"Squeeze the rope hard as you curl the weight up. Smooth, controlled reps."},{"name":"DB Concentration Curl","technique":"N/A","warmupSets":"1","workingSets":"1","reps":"15-20","earlyRPE":"N/A","lastRPE":"~8-9","rest":"1-2 min","sub1":"Concentration Cable Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Machine Chest Press","technique":"N/A","warmupSets":"2-4","workingSets":"2","reps":"10-12","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"3-5 min","sub1":"Barbell Bench Press","sub2":"DB Bench Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Seated DB Shoulder Press","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Machine Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half Seated Cable Flye","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Bottom-Half DB Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"EZ-Bar Skull Crusher","technique":"N/A","warmupSets":"1","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"DB Skull Crusher","sub2":"Katana Triceps Extension","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Triceps Pressdown (Bar)","technique":"N/A","warmupSets":"1","workingSets":"1","reps":"15-20","earlyRPE":"N/A","lastRPE":"~8-9","rest":"1-2 min","sub1":"Triceps Pressdown (Rope)","sub2":"DB Triceps Kickback","notes":"Focus on squeezing your triceps to move the weight"},{"name":"Ab Wheel Rollout","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Swiss Ball Rollout","sub2":"Long-Lever Plank","notes":"Don't just bend at your hips, use your abs to lower yourself down under control and pull yourself back up. If you don't have the core strength to get all the way extended at the bottom, try to progressively increase the ROM week to week."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Hack Squat","technique":"N/A","warmupSets":"2-4","workingSets":"2","reps":"10-12","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Leg Press","sub2":"DB Walking Lunge","notes":"Use a controlled negative (don't free fall) and then explode on the positive."},{"name":"Seated Leg Curl","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"Walking Lunge","technique":"N/A","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~6-7","lastRPE":"~7-8","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Static Lunge","notes":"Take medium strides. Minimize contribution from the back leg"},{"name":"Leg Extension","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"N/A","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~7-8","lastRPE":"~8-9","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Ramping Block","number":7,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline DB Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline Barbell Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Pec Deck","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Crossover Ladder","sub2":"Bottom-Half DB Flye","notes":"Focus on bringing your elbows together - not your hands"},{"name":"Dual-Handle Lat Pulldown","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Wide-Grip Pull-Up","notes":"Lean back by ~15° and drive your elbows down as you squeeze your shoulder blades together. This should feel like a mix of lats and mid-traps."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Smith Machine Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Pendlay Deficit Row","sub2":"Single-Arm DB Row","notes":"Focus on squeezing your shoulder blades together, keeping your elbows at a ~45° angle"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Static Lunge w/ Elevated Front Foot","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Elevate your front foot on a small box. Minimize contribution from your back leg."},{"name":"45° Hyperextension","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Glute-Ham Raise","sub2":"Cable Pull-Through","notes":"Squeeze your glutes hard at the top of each rep. Slow controlled reps on the way down, followed by an explosive positive."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Leg Press Calf Press","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Standing Calf Raise","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Machine Crunch","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Cable Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Lean-Back Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Lean-Back Machine Pulldown","sub2":"Pull-Up","notes":"Initiate the pulldown with a straight up posture. As you pull the bar down, lean back by about 15-30° to get the mid-back more involved. Softly touch the bar to your chest on every rep and, even though you're leaning back, still control the weight!"},{"name":"Chest-Supported T-Bar Row","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported Machine Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Dual-Handle Elbows-Out Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Arm-Out Single-Arm DB Row","sub2":"Meadows Row","notes":"Flare your elbows out ~45°. Smooth, controlled reps."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Cable Paused Shrug-In","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Machine Shrug","sub2":"DB Shrug","notes":"Shrug up and in. Think about shrugging \"up to your ears.\" 1-2 second pause in the squeeze (at the top) of each rep, then another 1-2 second pause in the stretch (at the bottom) of each rep."},{"name":"Cable Rope Hammer Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Hammer Curl","sub2":"Hammer Preacher Curl","notes":"Squeeze the rope hard as you curl the weight up. Smooth, controlled reps."},{"name":"DB Concentration Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Concentration Cable Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Machine Chest Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Barbell Bench Press","sub2":"DB Bench Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Seated DB Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Machine Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half Seated Cable Flye","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half DB Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"EZ-Bar Skull Crusher","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Skull Crusher","sub2":"Katana Triceps Extension","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Triceps Pressdown (Bar)","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Triceps Pressdown (Rope)","sub2":"DB Triceps Kickback","notes":"Focus on squeezing your triceps to move the weight"},{"name":"Ab Wheel Rollout","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Swiss Ball Rollout","sub2":"Long-Lever Plank","notes":"Don't just bend at your hips, use your abs to lower yourself down under control and pull yourself back up. If you don't have the core strength to get all the way extended at the bottom, try to progressively increase the ROM week to week."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Hack Squat","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Leg Press","sub2":"DB Walking Lunge","notes":"Use a controlled negative (don't free fall) and then explode on the positive."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"Walking Lunge","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Static Lunge","notes":"Take medium strides. Minimize contribution from the back leg"},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Ramping Block","number":8,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline DB Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline Barbell Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Pec Deck","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Crossover Ladder","sub2":"Bottom-Half DB Flye","notes":"Focus on bringing your elbows together - not your hands"},{"name":"Dual-Handle Lat Pulldown","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Wide-Grip Pull-Up","notes":"Lean back by ~15° and drive your elbows down as you squeeze your shoulder blades together. This should feel like a mix of lats and mid-traps."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Smith Machine Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Pendlay Deficit Row","sub2":"Single-Arm DB Row","notes":"Focus on squeezing your shoulder blades together, keeping your elbows at a ~45° angle"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Static Lunge w/ Elevated Front Foot","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Elevate your front foot on a small box. Minimize contribution from your back leg."},{"name":"45° Hyperextension","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Glute-Ham Raise","sub2":"Cable Pull-Through","notes":"Squeeze your glutes hard at the top of each rep. Slow controlled reps on the way down, followed by an explosive positive."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Leg Press Calf Press","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Standing Calf Raise","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Machine Crunch","technique":"Failure","warmupSets":"1","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Cable Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Lean-Back Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Lean-Back Machine Pulldown","sub2":"Pull-Up","notes":"Initiate the pulldown with a straight up posture. As you pull the bar down, lean back by about 15-30° to get the mid-back more involved. Softly touch the bar to your chest on every rep and, even though you're leaning back, still control the weight!"},{"name":"Chest-Supported T-Bar Row","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported Machine Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Dual-Handle Elbows-Out Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Arm-Out Single-Arm DB Row","sub2":"Meadows Row","notes":"Flare your elbows out ~45°. Smooth, controlled reps."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Cable Paused Shrug-In","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Machine Shrug","sub2":"DB Shrug","notes":"Shrug up and in. Think about shrugging \"up to your ears.\" 1-2 second pause in the squeeze (at the top) of each rep, then another 1-2 second pause in the stretch (at the bottom) of each rep."},{"name":"Cable Rope Hammer Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Hammer Curl","sub2":"Hammer Preacher Curl","notes":"Squeeze the rope hard as you curl the weight up. Smooth, controlled reps."},{"name":"DB Concentration Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Concentration Cable Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Machine Chest Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Barbell Bench Press","sub2":"DB Bench Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Seated DB Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Machine Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half Seated Cable Flye","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half DB Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"EZ-Bar Skull Crusher","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Skull Crusher","sub2":"Katana Triceps Extension","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Triceps Pressdown (Bar)","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Triceps Pressdown (Rope)","sub2":"DB Triceps Kickback","notes":"Focus on squeezing your triceps to move the weight"},{"name":"Ab Wheel Rollout","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Swiss Ball Rollout","sub2":"Long-Lever Plank","notes":"Don't just bend at your hips, use your abs to lower yourself down under control and pull yourself back up. If you don't have the core strength to get all the way extended at the bottom, try to progressively increase the ROM week to week."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Hack Squat","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Leg Press","sub2":"DB Walking Lunge","notes":"Use a controlled negative (don't free fall) and then explode on the positive."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"Walking Lunge","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Static Lunge","notes":"Take medium strides. Minimize contribution from the back leg"},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"2","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Ramping Block","number":9,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline DB Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline Barbell Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Pec Deck","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Crossover Ladder","sub2":"Bottom-Half DB Flye","notes":"Focus on bringing your elbows together - not your hands"},{"name":"Dual-Handle Lat Pulldown","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Wide-Grip Pull-Up","notes":"Lean back by ~15° and drive your elbows down as you squeeze your shoulder blades together. This should feel like a mix of lats and mid-traps."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Smith Machine Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Pendlay Deficit Row","sub2":"Single-Arm DB Row","notes":"Focus on squeezing your shoulder blades together, keeping your elbows at a ~45° angle"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Static Lunge w/ Elevated Front Foot","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Elevate your front foot on a small box. Minimize contribution from your back leg."},{"name":"45° Hyperextension","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Glute-Ham Raise","sub2":"Cable Pull-Through","notes":"Squeeze your glutes hard at the top of each rep. Slow controlled reps on the way down, followed by an explosive positive."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Leg Press Calf Press","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Standing Calf Raise","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Machine Crunch","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Cable Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Lean-Back Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Lean-Back Machine Pulldown","sub2":"Pull-Up","notes":"Initiate the pulldown with a straight up posture. As you pull the bar down, lean back by about 15-30° to get the mid-back more involved. Softly touch the bar to your chest on every rep and, even though you're leaning back, still control the weight!"},{"name":"Chest-Supported T-Bar Row","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported Machine Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Dual-Handle Elbows-Out Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Arm-Out Single-Arm DB Row","sub2":"Meadows Row","notes":"Flare your elbows out ~45°. Smooth, controlled reps."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Cable Paused Shrug-In","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Machine Shrug","sub2":"DB Shrug","notes":"Shrug up and in. Think about shrugging \"up to your ears.\" 1-2 second pause in the squeeze (at the top) of each rep, then another 1-2 second pause in the stretch (at the bottom) of each rep."},{"name":"Cable Rope Hammer Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Hammer Curl","sub2":"Hammer Preacher Curl","notes":"Squeeze the rope hard as you curl the weight up. Smooth, controlled reps."},{"name":"DB Concentration Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Concentration Cable Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Machine Chest Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Barbell Bench Press","sub2":"DB Bench Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Seated DB Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Machine Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half Seated Cable Flye","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half DB Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"EZ-Bar Skull Crusher","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Skull Crusher","sub2":"Katana Triceps Extension","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Triceps Pressdown (Bar)","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Triceps Pressdown (Rope)","sub2":"DB Triceps Kickback","notes":"Focus on squeezing your triceps to move the weight"},{"name":"Ab Wheel Rollout","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Swiss Ball Rollout","sub2":"Long-Lever Plank","notes":"Don't just bend at your hips, use your abs to lower yourself down under control and pull yourself back up. If you don't have the core strength to get all the way extended at the bottom, try to progressively increase the ROM week to week."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Hack Squat","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Leg Press","sub2":"DB Walking Lunge","notes":"Use a controlled negative (don't free fall) and then explode on the positive."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"Walking Lunge","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Static Lunge","notes":"Take medium strides. Minimize contribution from the back leg"},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Ramping Block","number":10,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline DB Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline Barbell Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Pec Deck","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Crossover Ladder","sub2":"Bottom-Half DB Flye","notes":"Focus on bringing your elbows together - not your hands"},{"name":"Dual-Handle Lat Pulldown","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Wide-Grip Pull-Up","notes":"Lean back by ~15° and drive your elbows down as you squeeze your shoulder blades together. This should feel like a mix of lats and mid-traps."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Smith Machine Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Pendlay Deficit Row","sub2":"Single-Arm DB Row","notes":"Focus on squeezing your shoulder blades together, keeping your elbows at a ~45° angle"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Static Lunge w/ Elevated Front Foot","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Elevate your front foot on a small box. Minimize contribution from your back leg."},{"name":"45° Hyperextension","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Glute-Ham Raise","sub2":"Cable Pull-Through","notes":"Squeeze your glutes hard at the top of each rep. Slow controlled reps on the way down, followed by an explosive positive."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Leg Press Calf Press","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Standing Calf Raise","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Machine Crunch","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Cable Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Lean-Back Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Lean-Back Machine Pulldown","sub2":"Pull-Up","notes":"Initiate the pulldown with a straight up posture. As you pull the bar down, lean back by about 15-30° to get the mid-back more involved. Softly touch the bar to your chest on every rep and, even though you're leaning back, still control the weight!"},{"name":"Chest-Supported T-Bar Row","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported Machine Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Dual-Handle Elbows-Out Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Arm-Out Single-Arm DB Row","sub2":"Meadows Row","notes":"Flare your elbows out ~45°. Smooth, controlled reps."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Cable Paused Shrug-In","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Machine Shrug","sub2":"DB Shrug","notes":"Shrug up and in. Think about shrugging \"up to your ears.\" 1-2 second pause in the squeeze (at the top) of each rep, then another 1-2 second pause in the stretch (at the bottom) of each rep."},{"name":"Cable Rope Hammer Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Hammer Curl","sub2":"Hammer Preacher Curl","notes":"Squeeze the rope hard as you curl the weight up. Smooth, controlled reps."},{"name":"DB Concentration Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Concentration Cable Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Machine Chest Press","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Barbell Bench Press","sub2":"DB Bench Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Seated DB Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Machine Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half Seated Cable Flye","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half DB Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"EZ-Bar Skull Crusher","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Skull Crusher","sub2":"Katana Triceps Extension","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Triceps Pressdown (Bar)","technique":"Myo-reps","warmupSets":"1","workingSets":"2","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Triceps Pressdown (Rope)","sub2":"DB Triceps Kickback","notes":"Focus on squeezing your triceps to move the weight"},{"name":"Ab Wheel Rollout","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Swiss Ball Rollout","sub2":"Long-Lever Plank","notes":"Don't just bend at your hips, use your abs to lower yourself down under control and pull yourself back up. If you don't have the core strength to get all the way extended at the bottom, try to progressively increase the ROM week to week."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Hack Squat","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Leg Press","sub2":"DB Walking Lunge","notes":"Use a controlled negative (don't free fall) and then explode on the positive."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"Walking Lunge","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Static Lunge","notes":"Take medium strides. Minimize contribution from the back leg"},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Ramping Block","number":11,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline DB Press","technique":"Failure","warmupSets":"2-3","workingSets":"4","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline Barbell Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Pec Deck","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Crossover Ladder","sub2":"Bottom-Half DB Flye","notes":"Focus on bringing your elbows together - not your hands"},{"name":"Dual-Handle Lat Pulldown","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Wide-Grip Pull-Up","notes":"Lean back by ~15° and drive your elbows down as you squeeze your shoulder blades together. This should feel like a mix of lats and mid-traps."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Smith Machine Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Pendlay Deficit Row","sub2":"Single-Arm DB Row","notes":"Focus on squeezing your shoulder blades together, keeping your elbows at a ~45° angle"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Static Lunge w/ Elevated Front Foot","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Elevate your front foot on a small box. Minimize contribution from your back leg."},{"name":"45° Hyperextension","technique":"Failure","warmupSets":"2-4","workingSets":"4","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Glute-Ham Raise","sub2":"Cable Pull-Through","notes":"Squeeze your glutes hard at the top of each rep. Slow controlled reps on the way down, followed by an explosive positive."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Leg Press Calf Press","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"4","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Standing Calf Raise","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Machine Crunch","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Cable Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Lean-Back Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Lean-Back Machine Pulldown","sub2":"Pull-Up","notes":"Initiate the pulldown with a straight up posture. As you pull the bar down, lean back by about 15-30° to get the mid-back more involved. Softly touch the bar to your chest on every rep and, even though you're leaning back, still control the weight!"},{"name":"Chest-Supported T-Bar Row","technique":"Failure","warmupSets":"2-3","workingSets":"4","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported Machine Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Dual-Handle Elbows-Out Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Arm-Out Single-Arm DB Row","sub2":"Meadows Row","notes":"Flare your elbows out ~45°. Smooth, controlled reps."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Cable Paused Shrug-In","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Machine Shrug","sub2":"DB Shrug","notes":"Shrug up and in. Think about shrugging \"up to your ears.\" 1-2 second pause in the squeeze (at the top) of each rep, then another 1-2 second pause in the stretch (at the bottom) of each rep."},{"name":"Cable Rope Hammer Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Hammer Curl","sub2":"Hammer Preacher Curl","notes":"Squeeze the rope hard as you curl the weight up. Smooth, controlled reps."},{"name":"DB Concentration Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"3","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Concentration Cable Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Machine Chest Press","technique":"Failure","warmupSets":"2-4","workingSets":"4","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Barbell Bench Press","sub2":"DB Bench Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Seated DB Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Machine Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half Seated Cable Flye","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half DB Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"EZ-Bar Skull Crusher","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Skull Crusher","sub2":"Katana Triceps Extension","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Triceps Pressdown (Bar)","technique":"Myo-reps","warmupSets":"1","workingSets":"3","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Triceps Pressdown (Rope)","sub2":"DB Triceps Kickback","notes":"Focus on squeezing your triceps to move the weight"},{"name":"Ab Wheel Rollout","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Swiss Ball Rollout","sub2":"Long-Lever Plank","notes":"Don't just bend at your hips, use your abs to lower yourself down under control and pull yourself back up. If you don't have the core strength to get all the way extended at the bottom, try to progressively increase the ROM week to week."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Hack Squat","technique":"Failure","warmupSets":"2-4","workingSets":"4","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Leg Press","sub2":"DB Walking Lunge","notes":"Use a controlled negative (don't free fall) and then explode on the positive."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"4","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"Walking Lunge","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Static Lunge","notes":"Take medium strides. Minimize contribution from the back leg"},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]},{"block":"Ramping Block","number":12,"days":[{"name":"Upper (Strength Focus)","rest":false,"exercises":[{"name":"45° Incline DB Press","technique":"Failure","warmupSets":"2-3","workingSets":"4","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"45° Incline Barbell Press","sub2":"45° Incline Machine Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Pec Deck","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Crossover Ladder","sub2":"Bottom-Half DB Flye","notes":"Focus on bringing your elbows together - not your hands"},{"name":"Dual-Handle Lat Pulldown","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Wide-Grip Lat Pulldown","sub2":"Wide-Grip Pull-Up","notes":"Lean back by ~15° and drive your elbows down as you squeeze your shoulder blades together. This should feel like a mix of lats and mid-traps."},{"name":"High-Cable Lateral Raise","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"Smith Machine Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Pendlay Deficit Row","sub2":"Single-Arm DB Row","notes":"Focus on squeezing your shoulder blades together, keeping your elbows at a ~45° angle"},{"name":"Overhead Cable Triceps Extension (Bar)","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Overhead Cable Triceps Extension (Rope)","sub2":"DB Skull Crusher","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Bayesian Cable Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Super-Bayesian High Cable Curl","sub2":"Incline DB Stretch Curl","notes":"If you have a left-right bicep size imbalance, do these 1 arm at a time, starting with the weaker arm. Take the weaker arm to the listed RPE. Then match the reps with the other arm (stop once you've matched the reps, even if the RPE is lower). If you don't have a size imbalance, do these both arms at the same time."}]},{"name":"Lower (Strength Focus)","rest":false,"exercises":[{"name":"Lying Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Leg Curl","sub2":"Nordic Ham Curl","notes":"Set the machine so that you get the biggest stretch possible at the bottom. Prevent your butt from popping up as you curl."},{"name":"Smith Machine Static Lunge w/ Elevated Front Foot","technique":"Failure","warmupSets":"2-4","workingSets":"3","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"DB Bulgarian Split Squat","sub2":"High-Bar Back Squat","notes":"Elevate your front foot on a small box. Minimize contribution from your back leg."},{"name":"45° Hyperextension","technique":"Failure","warmupSets":"2-4","workingSets":"4","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Glute-Ham Raise","sub2":"Cable Pull-Through","notes":"Squeeze your glutes hard at the top of each rep. Slow controlled reps on the way down, followed by an explosive positive."},{"name":"Leg Extension","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Leg Press Calf Press","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"4","reps":"8-10","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Standing Calf Raise","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."},{"name":"Machine Crunch","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Decline Weighted Crunch","sub2":"Cable Crunch","notes":"Round your lower back as you crunch. Maintain a mind-muscle connection with your 6-pack."}]},{"name":"Rest Day","rest":true,"exercises":[]},{"name":"Pull (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Lean-Back Lat Pulldown","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Lean-Back Machine Pulldown","sub2":"Pull-Up","notes":"Initiate the pulldown with a straight up posture. As you pull the bar down, lean back by about 15-30° to get the mid-back more involved. Softly touch the bar to your chest on every rep and, even though you're leaning back, still control the weight!"},{"name":"Chest-Supported T-Bar Row","technique":"Failure","warmupSets":"2-3","workingSets":"4","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Chest-Supported Machine Row","sub2":"Incline Chest-Supported DB Row","notes":"Flare elbows out at roughly 45° and squeeze your shoulder blades together hard at the top of each rep."},{"name":"Dual-Handle Elbows-Out Cable Row","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Arm-Out Single-Arm DB Row","sub2":"Meadows Row","notes":"Flare your elbows out ~45°. Smooth, controlled reps."},{"name":"1-Arm 45° Cable Rear Delt Flye","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Rope Face Pull","sub2":"Reverse Pec Deck","notes":"Pause for 1-2 seconds in the squeeze of each rep. Contract the rear delts hard!"},{"name":"Cable Paused Shrug-In","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Machine Shrug","sub2":"DB Shrug","notes":"Shrug up and in. Think about shrugging \"up to your ears.\" 1-2 second pause in the squeeze (at the top) of each rep, then another 1-2 second pause in the stretch (at the bottom) of each rep."},{"name":"Cable Rope Hammer Curl","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Hammer Curl","sub2":"Hammer Preacher Curl","notes":"Squeeze the rope hard as you curl the weight up. Smooth, controlled reps."},{"name":"DB Concentration Curl","technique":"Myo-reps","warmupSets":"1","workingSets":"3","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Concentration Cable Curl","sub2":"DB Preacher Curl","notes":"Smooth, controlled reps. Mind-muscle connection with the biceps."}]},{"name":"Push (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Machine Chest Press","technique":"Failure","warmupSets":"2-4","workingSets":"4","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"3-5 min","sub1":"Barbell Bench Press","sub2":"DB Bench Press","notes":"1 second pause at the bottom of each rep while maintaining tension on the pecs"},{"name":"Seated DB Shoulder Press","technique":"Failure","warmupSets":"2-3","workingSets":"3","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Cable Shoulder Press","sub2":"Machine Shoulder Press","notes":"Ensure that your elbows break at least 90°. Mind-muscle connection with your delts. Smooth, controlled reps."},{"name":"Bottom-Half Seated Cable Flye","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Bottom-Half DB Flye","sub2":"Low-to-High Cable Crossover","notes":"All reps and sets are to be performed in the bottom half of the ROM. Focus on feeling a deep stretch in your pecs at the bottom of each rep."},{"name":"High-Cable Lateral Raise","technique":"Myo-reps","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"High-Cable Cuffed Lateral Raise","sub2":"Lean-In DB Lateral Raise","notes":"Focus on squeezing your lateral delt to move the weight."},{"name":"EZ-Bar Skull Crusher","technique":"Failure","warmupSets":"1","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"DB Skull Crusher","sub2":"Katana Triceps Extension","notes":"Optionally pause for 0.5-1 second in the stretched aspect of each rep"},{"name":"Triceps Pressdown (Bar)","technique":"Myo-reps","warmupSets":"1","workingSets":"3","reps":"15-20","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Triceps Pressdown (Rope)","sub2":"DB Triceps Kickback","notes":"Focus on squeezing your triceps to move the weight"},{"name":"Ab Wheel Rollout","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Swiss Ball Rollout","sub2":"Long-Lever Plank","notes":"Don't just bend at your hips, use your abs to lower yourself down under control and pull yourself back up. If you don't have the core strength to get all the way extended at the bottom, try to progressively increase the ROM week to week."}]},{"name":"Legs (Hypertrophy Focus)","rest":false,"exercises":[{"name":"Hack Squat","technique":"Failure","warmupSets":"2-4","workingSets":"4","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Leg Press","sub2":"DB Walking Lunge","notes":"Use a controlled negative (don't free fall) and then explode on the positive."},{"name":"Seated Leg Curl","technique":"Failure + LLPs (Extend set)","warmupSets":"1-2","workingSets":"4","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Lying Leg Curl","sub2":"Nordic Ham Curl","notes":"Lean forward over the machine to get a maximum stretch in your hamstrings."},{"name":"Walking Lunge","technique":"Failure","warmupSets":"2-3","workingSets":"2","reps":"10-12","earlyRPE":"~8-9","lastRPE":"10","rest":"2-3 min","sub1":"Smith Machine Static Lunge","sub2":"DB Static Lunge","notes":"Take medium strides. Minimize contribution from the back leg"},{"name":"Leg Extension","technique":"Myo-reps","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Reverse Nordic","sub2":"Sissy Squat","notes":"Set the seat back as far as it will go while still feeling comfortable. Grab the handles as hard as you can to pull your butt down into the seat. Use a 2-3 second negative. Feel your quads pulling apart on the negative."},{"name":"Machine Hip Adduction","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Adduction","sub2":"Copenhagen Hip Adduction","notes":"Mind-muscle connection with your inner thighs. These are great for adding thigh mass from the front! Push them hard!"},{"name":"Machine Hip Abduction","technique":"Failure","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Cable Hip Abduction","sub2":"Lateral Band Walk","notes":"If possible, use pads to increase the range of motion on the machine. Lean forward and grab onto the machine rails to stretch the glutes further."},{"name":"Standing Calf Raise","technique":"Static Stretch (30s)","warmupSets":"1-2","workingSets":"3","reps":"12-15","earlyRPE":"~8-9","lastRPE":"10","rest":"1-2 min","sub1":"Seated Calf Raise","sub2":"Leg Press Calf Press","notes":"1-2 second pause at the bottom of each rep. Instead of just going up onto your toes, think about rolling your ankle back and forth on the balls of your feet."}]},{"name":"Rest Day","rest":true,"exercises":[]}]}]};
+const STORAGE_KEY = 'bbts.v1';
+
+// ---- State / storage ----
+const state = {
+  logs: {},      // key: w{n}.d{i}.e{j}.s{k} -> {w, r, done}
+  cursor: { week: 1, day: 0 }, // first non-rest day index in week
+  timer: null,
+};
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const obj = JSON.parse(raw);
+      Object.assign(state, obj);
+      state.logs = state.logs || {};
+      state.cursor = state.cursor || { week: 1, day: 0 };
+    }
+  } catch (e) { console.warn(e); }
+}
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ logs: state.logs, cursor: state.cursor }));
+  } catch (e) {}
+}
+load();
+
+// ---- Helpers ----
+function $(sel, root) { return (root||document).querySelector(sel); }
+function $$(sel, root) { return Array.from((root||document).querySelectorAll(sel)); }
+const el = (tag, props={}, children=[]) => {
+  const e = document.createElement(tag);
+  for (const [k,v] of Object.entries(props)) {
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (v === false || v == null) {}
+    else if (v === true) e.setAttribute(k, '');
+    else e.setAttribute(k, v);
+  }
+  for (const c of [].concat(children)) {
+    if (c == null || c === false) continue;
+    if (typeof c === 'string') e.appendChild(document.createTextNode(c));
+    else e.appendChild(c);
+  }
+  return e;
+};
+function setKey(w, d, e, s) { return `w${w}.d${d}.e${e}.s${s}`; }
+
+function dayClass(name) {
+  const n = name.toLowerCase();
+  if (n.startsWith('upper')) return 'upper';
+  if (n.startsWith('lower')) return 'lower';
+  if (n.startsWith('pull')) return 'pull';
+  if (n.startsWith('push')) return 'push';
+  if (n.startsWith('legs')) return 'legs';
+  return '';
+}
+function dayInitials(name) {
+  const n = name.split(' ')[0];
+  return ({Upper:'UP', Lower:'LO', Pull:'PL', Push:'PS', Legs:'LG'})[n] || n.slice(0,2).toUpperCase();
+}
+function focusOf(name) {
+  const m = name.match(/\(([^)]+)\)/);
+  return m ? m[1] : '';
+}
+
+function dayProgress(weekNum, dayIdx) {
+  const day = PROGRAM.weeks[weekNum-1].days[dayIdx];
+  if (!day || day.rest) return { done: 0, total: 0, pct: 0 };
+  let total = 0, done = 0;
+  day.exercises.forEach((ex, exi) => {
+    const ws = parseInt(ex.workingSets, 10) || 1;
+    for (let s = 0; s < ws; s++) {
+      total++;
+      const k = setKey(weekNum, dayIdx, exi, s);
+      if (state.logs[k] && state.logs[k].done) done++;
+    }
+  });
+  return { done, total, pct: total ? Math.round(done * 100 / total) : 0 };
+}
+
+function weekProgress(weekNum) {
+  const week = PROGRAM.weeks[weekNum-1];
+  let total = 0, done = 0;
+  week.days.forEach((d, i) => {
+    if (d.rest) return;
+    const p = dayProgress(weekNum, i);
+    total += p.total; done += p.done;
+  });
+  return { done, total, pct: total ? Math.round(done * 100 / total) : 0 };
+}
+
+// Find the next incomplete day to suggest as "current"
+function nextSuggestedDay() {
+  for (let w = 1; w <= PROGRAM.weeks.length; w++) {
+    const days = PROGRAM.weeks[w-1].days;
+    for (let d = 0; d < days.length; d++) {
+      if (days[d].rest) continue;
+      const p = dayProgress(w, d);
+      if (p.done < p.total) return { week: w, day: d };
+    }
+  }
+  return { week: PROGRAM.weeks.length, day: days_of(PROGRAM.weeks.length).findIndex(d => !d.rest) };
+}
+function days_of(w) { return PROGRAM.weeks[w-1].days; }
+
+// ---- Router ----
+function route() {
+  const hash = location.hash || '#/';
+  const m = hash.match(/^#\/w\/(\d+)\/d\/(\d+)$/);
+  if (m) return { name: 'day', week: parseInt(m[1],10), day: parseInt(m[2],10) };
+  const mw = hash.match(/^#\/w\/(\d+)$/);
+  if (mw) return { name: 'week', week: parseInt(mw[1],10) };
+  if (hash === '#/weeks') return { name: 'weeks' };
+  if (hash === '#/protocol') return { name: 'protocol' };
+  if (hash === '#/stats') return { name: 'stats' };
+  return { name: 'home' };
+}
+function go(hash) { location.hash = hash; }
+
+window.addEventListener('hashchange', render);
+
+// ---- Modal ----
+function modal({ title, body, ok='OK', okCls='primary', cancel='Cancel', onOk }) {
+  $('#modal-title').textContent = title;
+  $('#modal-body').textContent = body || '';
+  const okBtn = $('#modal-ok'); okBtn.textContent = ok;
+  okBtn.className = 'btn ' + okCls + ' full';
+  const cancelBtn = $('#modal-cancel');
+  cancelBtn.textContent = cancel;
+  cancelBtn.style.display = cancel ? '' : 'none';
+  $('#modal').classList.add('show');
+  const close = () => $('#modal').classList.remove('show');
+  okBtn.onclick = () => { close(); onOk && onOk(); };
+  cancelBtn.onclick = close;
+  $('#modal').onclick = (e) => { if (e.target.id === 'modal') close(); };
+}
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1400);
+}
+
+// ---- Rest timer ----
+function parseRestSeconds(restStr) {
+  // "3-5 min" -> use min lower bound -> 180. "1-2 min" -> 60. "1 min" -> 60.
+  const m = (restStr||'').match(/(\d+)\s*-\s*(\d+)\s*min/);
+  if (m) return parseInt(m[1],10) * 60;
+  const m2 = (restStr||'').match(/(\d+)\s*min/);
+  if (m2) return parseInt(m2[1],10) * 60;
+  return 90;
+}
+function startTimer(seconds) {
+  stopTimer();
+  state.timer = { remaining: seconds, total: seconds };
+  $('#fab').classList.add('show');
+  tickTimer();
+  state.timer.interval = setInterval(tickTimer, 1000);
+}
+function tickTimer() {
+  if (!state.timer) return;
+  const r = state.timer.remaining;
+  const m = Math.floor(Math.max(0, r) / 60), s = Math.max(0, r) % 60;
+  $('#fab-time').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  if (r <= 10 && r >= 0) $('#fab').classList.add('warn');
+  if (r <= 0) {
+    if (navigator.vibrate) navigator.vibrate([120, 80, 200]);
+    toast('Rest done — go!');
+    stopTimer();
+    return;
+  }
+  state.timer.remaining--;
+}
+function stopTimer() {
+  if (state.timer && state.timer.interval) clearInterval(state.timer.interval);
+  state.timer = null;
+  $('#fab').classList.remove('show', 'warn');
+}
+$('#fab').addEventListener('click', stopTimer);
+
+// ---- Views ----
+function viewHome() {
+  const sugg = nextSuggestedDay();
+  const w = sugg.week, di = sugg.day;
+  const day = days_of(w)[di];
+  const wp = weekProgress(w);
+
+  const hero = el('section', { class: 'hero fade-in' }, [
+    el('div', { class: 'eyebrow' }, `Week ${w} · ${PROGRAM.weeks[w-1].block}`),
+    el('h1', {}, day ? day.name : 'Program complete 🎉'),
+    el('div', { class: 'sub' }, day ? `Up next — ${day.exercises.length} exercises · ${focusOf(day.name)}` : 'You finished all 12 weeks.'),
+    el('div', { class: 'row' }, [
+      day ? el('button', { class: 'btn primary', onclick: () => go(`#/w/${w}/d/${di}`) }, ['Start workout →']) : null,
+      el('button', { class: 'btn ghost', onclick: () => go(`#/w/${w}`) }, ['Browse Week ' + w]),
+    ]),
+  ]);
+
+  // Recent activity / week ring
+  const wkPanel = el('section', { class: 'panel fade-in', style: 'padding:18px 20px;margin-top:16px' }, [
+    el('div', { style: 'display:flex;align-items:center;gap:16px' }, [
+      el('div', { style: 'flex:1' }, [
+        el('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'This week'),
+        el('div', { style: 'font-weight:700;font-size:18px' }, `${wp.done} / ${wp.total} sets`),
+        el('div', { class: 'muted mono', style: 'font-size:12px;margin-top:4px' }, `${wp.pct}% complete`),
+      ]),
+      el('div', { style: `width:64px;height:64px;border-radius:50%;background:conic-gradient(var(--accent) ${wp.pct}%, var(--bg-3) 0);display:grid;place-items:center` }, [
+        el('div', { style: 'width:48px;height:48px;border-radius:50%;background:var(--bg-1);display:grid;place-items:center;font-weight:800;font-family:JetBrains Mono, monospace;font-size:14px' }, `${wp.pct}%`)
+      ])
+    ])
+  ]);
+
+  // Quick days list for current week
+  const dayList = el('div', { class: 'days-list fade-in', style: 'margin-top:14px' },
+    days_of(w).map((d, i) => dayCard(w, i, d))
+  );
+
+  return el('div', {}, [
+    hero, wkPanel,
+    el('div', { class: 'section' }, [ el('h2', {}, `Week ${w} days`), el('div', { class: 'meta' }, PROGRAM.weeks[w-1].block) ]),
+    dayList,
+  ]);
+}
+
+function dayCard(w, i, d) {
+  if (d.rest) {
+    return el('div', { class: 'day-card rest' }, [
+      el('div', { class: 'badge' }, '∅'),
+      el('div', { class: 'title' }, [ el('div', { class: 'name' }, 'Rest Day'), el('div', { class: 'meta' }, 'Recovery — no work today') ]),
+    ]);
+  }
+  const p = dayProgress(w, i);
+  const cls = dayClass(d.name);
+  const done = p.total > 0 && p.done === p.total;
+  return el('button', {
+    class: `day-card ${cls}`,
+    onclick: () => go(`#/w/${w}/d/${i}`),
+  }, [
+    el('div', { class: 'badge' }, dayInitials(d.name)),
+    el('div', { class: 'title' }, [
+      el('div', { class: 'name' }, d.name),
+      el('div', { class: 'meta' }, `${d.exercises.length} exercises · ${p.done}/${p.total} sets`),
+    ]),
+    el('div', { class: 'ring' + (done ? ' done' : ''), style: `--p:${p.pct}` })
+  ]);
+}
+
+function viewWeeks() {
+  const blocks = {};
+  PROGRAM.weeks.forEach(w => {
+    blocks[w.block] = blocks[w.block] || [];
+    blocks[w.block].push(w);
+  });
+  const blockNodes = Object.entries(blocks).map(([name, weeks]) => {
+    return el('div', {}, [
+      el('div', { class: 'block-head' }, [
+        el('span', { class: 'pill' }, name),
+        el('h3', {}, `Weeks ${weeks[0].number}–${weeks[weeks.length-1].number}`),
+      ]),
+      el('div', { class: 'week-grid' }, weeks.map(w => {
+        const p = weekProgress(w.number);
+        return el('button', {
+          class: 'week-card' + (p.done > 0 && p.done < p.total ? ' current' : ''),
+          onclick: () => go(`#/w/${w.number}`),
+        }, [
+          el('div', { class: 'wk' }, 'WEEK'),
+          el('div', { class: 'num' }, String(w.number)),
+          el('div', { class: 'muted mono', style: 'font-size:11px;margin-top:6px' }, `${p.done}/${p.total} sets`),
+          el('div', { class: 'prog' }, [ el('i', { style: `width:${p.pct}%` }) ])
+        ]);
+      }))
+    ]);
+  });
+
+  return el('div', { class: 'fade-in' }, [
+    el('div', { class: 'section', style: 'margin-top:18px' }, [
+      el('h2', {}, 'Browse weeks'),
+      el('div', { class: 'meta' }, `${PROGRAM.weeks.length} weeks`),
+    ]),
+    el('div', { class: 'blocks' }, blockNodes),
+  ]);
+}
+
+function viewWeek(weekNum) {
+  const w = PROGRAM.weeks[weekNum-1];
+  if (!w) return el('div', {}, 'Week not found.');
+  return el('div', { class: 'fade-in' }, [
+    el('div', { class: 'day-header' }, [
+      el('div', { class: 'crumbs' }, [ el('span', {}, w.block), ' / ', el('span', {}, `Week ${w.number}`) ]),
+      el('h1', {}, `Week ${w.number}`),
+    ]),
+    el('div', { class: 'days-list', style: 'margin-top:18px' },
+      w.days.map((d, i) => dayCard(w.number, i, d))
+    ),
+  ]);
+}
+
+function exerciseCard(weekNum, dayIdx, ex, exIdx) {
+  const ws = Math.max(1, parseInt(ex.workingSets, 10) || 1);
+  const setsKey = (s) => setKey(weekNum, dayIdx, exIdx, s);
+
+  // Build set rows
+  const setsGrid = [];
+  for (let s = 0; s < ws; s++) {
+    const k = setsKey(s);
+    const log = state.logs[k] || {};
+    const isLast = s === ws - 1;
+    const isDone = !!log.done;
+    const row = el('div', { class: 'set-row' + (isDone ? ' done' : '') }, [
+      el('div', { class: 'set-num' }, String(s+1)),
+      el('input', {
+        type: 'number', inputmode: 'decimal', step: 'any', placeholder: 'lbs',
+        value: log.w != null ? log.w : '',
+        oninput: (ev) => {
+          state.logs[k] = state.logs[k] || {};
+          state.logs[k].w = ev.target.value === '' ? null : parseFloat(ev.target.value);
+          save();
+        }
+      }),
+      el('input', {
+        type: 'number', inputmode: 'numeric', step: '1', placeholder: 'reps',
+        value: log.r != null ? log.r : '',
+        oninput: (ev) => {
+          state.logs[k] = state.logs[k] || {};
+          state.logs[k].r = ev.target.value === '' ? null : parseInt(ev.target.value, 10);
+          save();
+        }
+      }),
+      el('button', { class: 'check', title: 'Mark set complete', onclick: (ev) => {
+        const cur = state.logs[k] || {};
+        cur.done = !cur.done;
+        state.logs[k] = cur;
+        save();
+        const rowEl = ev.currentTarget.parentElement;
+        rowEl.classList.toggle('done', cur.done);
+        // Trigger rest timer when checking on
+        if (cur.done) {
+          const secs = parseRestSeconds(ex.rest);
+          startTimer(secs);
+        }
+        // Update progress
+        updateDayHeader(weekNum, dayIdx);
+      }}, isDone ? '✓' : '○')
+    ]);
+    setsGrid.push(row);
+  }
+
+  const tagsRow = el('div', { class: 'tags' }, [
+    el('span', { class: 'tag reps' }, `${ex.reps} reps`),
+    el('span', { class: 'tag rpe' }, `RPE ${ex.lastRPE}`),
+    el('span', { class: 'tag rest-tag' }, `rest ${ex.rest}`),
+    ex.technique && ex.technique !== 'N/A' ? el('span', { class: 'tag tech' }, ex.technique) : null,
+  ]);
+
+  const card = el('div', { class: 'ex-card' }, [
+    el('div', { class: 'ex-head toggle-detail', onclick: (ev) => {
+      // Only toggle when not tapping interactive elements
+      if (ev.target.closest('input,button')) return;
+      card.classList.toggle('open');
+    }}, [
+      el('div', { class: 'idx' }, String(exIdx+1).padStart(2,'0')),
+      el('div', { class: 'ex-name' }, [
+        el('div', { class: 'nm' }, ex.name),
+        tagsRow,
+      ]),
+    ]),
+    el('div', { class: 'ex-stats' }, [
+      statBlock('Working', `${ws} set${ws>1?'s':''}`),
+      statBlock('Warm-up', ex.warmupSets || '—'),
+      statBlock('Reps', ex.reps),
+      statBlock('Last RPE', ex.lastRPE),
+    ]),
+    el('div', { class: 'sets-wrap' }, [
+      el('div', { class: 'sets-head' }, [
+        el('div', { class: 'grid' }, [
+          el('div', { class: 'h col-set' }, 'SET'),
+          el('div', { class: 'h' }, 'WEIGHT'),
+          el('div', { class: 'h' }, 'REPS'),
+          el('div', { class: 'h', style: 'text-align:center' }, '✓'),
+        ])
+      ]),
+      ...setsGrid,
+    ]),
+    el('div', { class: 'ex-detail' }, [
+      ex.technique && ex.technique !== 'N/A' ? detailRow('Technique', ex.technique) : null,
+      detailRow('Warm-up sets', ex.warmupSets || '—'),
+      detailRow('Early RPE', ex.earlyRPE || '—'),
+      detailRow('Rest', ex.rest || '—'),
+      ex.sub1 ? detailRow('Sub option 1', ex.sub1) : null,
+      ex.sub2 ? detailRow('Sub option 2', ex.sub2) : null,
+      ex.notes ? detailRow('Notes', ex.notes) : null,
+    ].filter(Boolean)),
+  ]);
+  return card;
+}
+
+function statBlock(k, v) {
+  return el('div', { class: 'ex-stat' }, [
+    el('div', { class: 'k' }, k),
+    el('div', { class: 'v' }, v),
+  ]);
+}
+function detailRow(k, v) {
+  return el('div', { class: 'row' }, [
+    el('div', { class: 'k' }, k),
+    el('div', { class: 'v' }, v),
+  ]);
+}
+
+function updateDayHeader(weekNum, dayIdx) {
+  const p = dayProgress(weekNum, dayIdx);
+  const bar = document.getElementById('dh-bar');
+  const txt = document.getElementById('dh-text');
+  if (bar) bar.style.width = p.pct + '%';
+  if (txt) txt.textContent = `${p.done} / ${p.total} sets`;
+}
+
+function viewDay(weekNum, dayIdx) {
+  const w = PROGRAM.weeks[weekNum-1];
+  if (!w) return el('div', {}, 'Week not found.');
+  const d = w.days[dayIdx];
+  if (!d) return el('div', {}, 'Day not found.');
+  if (d.rest) {
+    return el('div', { class: 'fade-in' }, [
+      el('div', { class: 'day-header' }, [
+        el('div', { class: 'crumbs' }, [w.block, ' / Week ' + w.number]),
+        el('h1', {}, 'Rest Day'),
+        el('div', { class: 'muted', style: 'margin-top:10px' }, 'Recovery is the workout. Eat, sleep, walk.'),
+      ]),
+    ]);
+  }
+  const p = dayProgress(weekNum, dayIdx);
+  const header = el('div', { class: 'day-header' }, [
+    el('div', { class: 'crumbs' }, [
+      el('a', { href: '#/weeks' }, w.block), ' / ',
+      el('a', { href: `#/w/${w.number}` }, `Week ${w.number}`)
+    ]),
+    el('h1', {}, d.name),
+    el('div', { class: 'progress' }, [ el('i', { id: 'dh-bar', style: `width:${p.pct}%` }) ]),
+    el('div', { class: 'progmeta' }, [
+      el('span', { id: 'dh-text' }, `${p.done} / ${p.total} sets`),
+      el('span', {}, focusOf(d.name)),
+    ])
+  ]);
+
+  // Prev/next day buttons
+  let prevDay = null, nextDay = null;
+  for (let i = dayIdx - 1; i >= 0; i--) if (!w.days[i].rest) { prevDay = i; break; }
+  for (let i = dayIdx + 1; i < w.days.length; i++) if (!w.days[i].rest) { nextDay = i; break; }
+
+  const navRow = el('div', { class: 'row', style: 'display:flex;gap:10px;margin-top:18px' }, [
+    prevDay != null ? el('button', { class: 'btn ghost', onclick: () => go(`#/w/${w.number}/d/${prevDay}`) }, ['← Prev']) : null,
+    el('button', { class: 'btn ghost', style: 'flex:1', onclick: () => go(`#/w/${w.number}`) }, ['All days']),
+    nextDay != null ? el('button', { class: 'btn ghost', onclick: () => go(`#/w/${w.number}/d/${nextDay}`) }, ['Next →']) : null,
+  ]);
+
+  return el('div', { class: 'fade-in' }, [
+    header,
+    el('div', { class: 'ex-list' }, d.exercises.map((ex, i) => exerciseCard(weekNum, dayIdx, ex, i))),
+    navRow,
+  ]);
+}
+
+function viewProtocol() {
+  return el('div', { class: 'fade-in' }, [
+    el('div', { class: 'day-header' }, [
+      el('div', { class: 'crumbs' }, ['Program']),
+      el('h1', {}, 'Protocol & Notes'),
+    ]),
+    el('section', { class: 'panel' }, [
+      el('h3', {}, 'Important program notes'),
+      el('div', { class: 'muted', style: 'font-size:14px;white-space:pre-line;line-height:1.7' },
+        (PROGRAM.programNotes || '').replace(/●/g, '\n●').trim()
+      ),
+    ]),
+    el('section', { class: 'panel' }, [
+      el('h3', {}, 'General warm-up'),
+      el('div', { class: 'muted', style: 'margin-bottom:10px;font-size:13px' }, 'Perform before every workout (5–10 min).'),
+      ...PROGRAM.warmupGeneral.map(w => el('div', { class: 'protocol-row' }, [
+        el('div', { class: 'k' }, w.duration),
+        el('div', { class: 'v' }, w.exercise),
+      ])),
+    ]),
+    el('section', { class: 'panel' }, [
+      el('h3', {}, 'Exercise-specific warm-up'),
+      el('div', { class: 'muted', style: 'margin-bottom:10px;font-size:13px' }, 'Use the number of warm-up sets listed on each exercise.'),
+      ...PROGRAM.warmupSpecific.map(w => el('div', { class: 'protocol-row' }, [
+        el('div', { class: 'k' }, w.sets),
+        el('div', { class: 'v', style: 'white-space:pre-line' }, (w.instructions||'').replace(/\\n/g,'\n')),
+      ])),
+    ]),
+    el('section', { class: 'panel' }, [
+      el('h3', {}, 'About this app'),
+      el('div', { class: 'muted', style: 'font-size:13px;line-height:1.7' }, [
+        'Your sets save automatically to this device. Tap the ○ button on each set to mark it complete — the rest timer (yellow pill, bottom-right) starts automatically. Tap the timer to dismiss. Tap an exercise card to expand notes, substitutions, and full technique cues.',
+      ]),
+      el('div', { style: 'display:flex;gap:8px;flex-wrap:wrap;margin-top:14px' }, [
+        el('button', { class: 'btn', onclick: exportLogs }, ['Export logs (JSON)']),
+        el('button', { class: 'btn', onclick: importLogs }, ['Import logs (JSON)']),
+        el('button', { class: 'btn danger', onclick: () => modal({
+          title: 'Reset all progress?',
+          body: 'This will delete every set you\'ve logged on this device. There\'s no undo.',
+          ok: 'Delete everything', okCls: 'btn danger',
+          onOk: () => { state.logs = {}; save(); toast('Progress cleared'); render(); },
+        })}, ['Reset progress']),
+      ]),
+    ]),
+  ]);
+}
+
+function viewStats() {
+  // Compute per-week & per-day completion + total sets logged + estimated total volume
+  let totalSets = 0, totalVolume = 0, totalReps = 0;
+  for (const k in state.logs) {
+    const l = state.logs[k];
+    if (l && l.done) totalSets++;
+    if (l && l.w && l.r) { totalVolume += l.w * l.r; totalReps += l.r; }
+  }
+
+  const weekRows = PROGRAM.weeks.map(w => {
+    const p = weekProgress(w.number);
+    return el('div', { class: 'protocol-row', onclick: () => go(`#/w/${w.number}`), style: 'cursor:pointer' }, [
+      el('div', { class: 'k' }, `Week ${w.number}`),
+      el('div', { class: 'v', style: 'display:flex;align-items:center;gap:10px' }, [
+        el('div', { style: 'flex:1' }, [
+          el('div', { class: 'progress', style: 'height:6px;background:var(--bg-3);border:1px solid var(--line);border-radius:999px;overflow:hidden' }, [
+            el('i', { style: `display:block;height:100%;background:var(--accent);width:${p.pct}%` })
+          ]),
+        ]),
+        el('div', { class: 'mono muted', style: 'font-size:12px;min-width:62px;text-align:right' }, `${p.done}/${p.total}`),
+      ]),
+    ]);
+  });
+
+  return el('div', { class: 'fade-in' }, [
+    el('div', { class: 'day-header' }, [
+      el('div', { class: 'crumbs' }, ['Your progress']),
+      el('h1', {}, 'Stats'),
+    ]),
+    el('section', { class: 'panel' }, [
+      el('div', { style: 'display:grid;grid-template-columns:repeat(3,1fr);gap:0' }, [
+        el('div', { style: 'text-align:center;padding:10px' }, [
+          el('div', { class: 'eyebrow' }, 'Sets done'),
+          el('div', { style: 'font-size:24px;font-weight:800;margin-top:4px' }, String(totalSets)),
+        ]),
+        el('div', { style: 'text-align:center;padding:10px;border-left:1px solid var(--line);border-right:1px solid var(--line)' }, [
+          el('div', { class: 'eyebrow' }, 'Total reps'),
+          el('div', { style: 'font-size:24px;font-weight:800;margin-top:4px' }, String(totalReps)),
+        ]),
+        el('div', { style: 'text-align:center;padding:10px' }, [
+          el('div', { class: 'eyebrow' }, 'Volume (lb·reps)'),
+          el('div', { style: 'font-size:24px;font-weight:800;margin-top:4px' }, totalVolume.toLocaleString()),
+        ]),
+      ]),
+    ]),
+    el('section', { class: 'panel' }, [
+      el('h3', {}, 'Per-week completion'),
+      ...weekRows,
+    ]),
+  ]);
+}
+
+function exportLogs() {
+  const data = JSON.stringify({ logs: state.logs, exported: new Date().toISOString() }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'bbts-logs.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast('Logs exported');
+}
+
+function importLogs() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json,.json';
+  input.onchange = (ev) => {
+    const file = ev.target.files && ev.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      let parsed;
+      try {
+        parsed = JSON.parse(reader.result);
+      } catch (e) {
+        modal({ title: 'Import failed', body: 'That file isn\'t valid JSON.', ok: 'OK', cancel: '' });
+        return;
+      }
+      // Accept either {logs: {...}} or a bare logs map
+      const incoming = (parsed && typeof parsed === 'object' && parsed.logs && typeof parsed.logs === 'object')
+        ? parsed.logs
+        : parsed;
+      if (!incoming || typeof incoming !== 'object' || Array.isArray(incoming)) {
+        modal({ title: 'Import failed', body: 'No logs found in that file.', ok: 'OK', cancel: '' });
+        return;
+      }
+      // Validate shape: keys look like "w1.d0.e0.s0"
+      const keys = Object.keys(incoming);
+      const validKeys = keys.filter(k => /^w\d+\.d\d+\.e\d+\.s\d+$/.test(k));
+      if (validKeys.length === 0) {
+        modal({ title: 'Import failed', body: 'That file doesn\'t contain any BBTS logs.', ok: 'OK', cancel: '' });
+        return;
+      }
+      const existing = Object.keys(state.logs).length;
+      modal({
+        title: existing ? 'Replace existing logs?' : 'Import logs?',
+        body: existing
+          ? `You have ${existing} logged set${existing===1?'':'s'} on this device. Importing will replace them with ${validKeys.length} set${validKeys.length===1?'':'s'} from the file.`
+          : `Import ${validKeys.length} logged set${validKeys.length===1?'':'s'} from the file?`,
+        ok: existing ? 'Replace' : 'Import',
+        okCls: existing ? 'btn danger' : 'primary',
+        onOk: () => {
+          const newLogs = {};
+          for (const k of validKeys) {
+            const v = incoming[k];
+            if (v && typeof v === 'object') newLogs[k] = v;
+          }
+          state.logs = newLogs;
+          save();
+          toast(`Imported ${validKeys.length} set${validKeys.length===1?'':'s'}`);
+          render();
+        }
+      });
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ---- Render ----
+function render() {
+  const r = route();
+  const app = $('#app');
+  app.innerHTML = '';
+  let node;
+  switch (r.name) {
+    case 'home': node = viewHome(); break;
+    case 'weeks': node = viewWeeks(); break;
+    case 'week': node = viewWeek(r.week); break;
+    case 'day': node = viewDay(r.week, r.day); break;
+    case 'protocol': node = viewProtocol(); break;
+    case 'stats': node = viewStats(); break;
+    default: node = viewHome();
+  }
+  app.appendChild(node);
+
+  // Back button shown except on home
+  $('#backbtn').classList.toggle('hidden', r.name === 'home');
+
+  // Footer nav active state
+  const routeForNav = (r.name === 'home') ? '#/' :
+                      (r.name === 'weeks' || r.name === 'week' || r.name === 'day') ? '#/weeks' :
+                      (r.name === 'protocol') ? '#/protocol' :
+                      (r.name === 'stats') ? '#/stats' : '#/';
+  $$('.footnav .nb').forEach(b => b.classList.toggle('active', b.dataset.route === routeForNav));
+
+  // Scroll to top on route change
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+}
+
+// Wire footer
+$$('.footnav .nb').forEach(b => b.addEventListener('click', () => go(b.dataset.route)));
+$('#backbtn').addEventListener('click', () => history.back());
+$('#resetbtn').addEventListener('click', () => go('#/protocol'));
+
+render();
+</script>
+</body>
+</html>
